@@ -8,6 +8,9 @@ sub startup {
   # Documentation browser under "/perldoc"
   $self->plugin('PODRenderer');
 
+  # Template Engine
+  $self->plugin('tt_renderer');
+
   # Router
   my $r = $self->routes;
 
@@ -16,6 +19,7 @@ sub startup {
 
   # Namespace
   $r->namespaces(['Moadbook::C']);
+
 }
 
 1;
