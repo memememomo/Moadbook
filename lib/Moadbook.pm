@@ -11,6 +11,12 @@ sub startup {
   # Template Engine
   $self->plugin('tt_renderer');
 
+  # Load Config
+  $self->plugin(config => {
+	  file		=> $self->home->rel_file('/conf/'.$self->mode.'.pl'),
+	  stash_key => 'config',
+  });
+
   # Router
   my $r = $self->routes;
 
