@@ -50,14 +50,42 @@ sub startup {
 	  );
   });
 
+  # 結果メッセージ
+  $self->helper(set_result_message => sub {
+	  my ($self, $message) = @_;
+	  $self->flash(result_message => $message);
+  });
+
+  # エラーメッセージ
+  $self->helper(set_error_messages => sub {
+	  my ($self, $messages) = @_;
+	  unless (ref $messages) { $messages = [$messages] }
+	  $self->stash(error_messages => $messages);
+  });
+
+  # check method
+  $self->helper(is_post_method => sub {
+	  my $self = shift;
+	  return lc($self->req->method) eq 'post' ? 1 : 0;
+  });
+
+  $self->helper(is_get_method => sub {
+	  my $self = shift;
+	  return lc($self->req->method) eq 'get' ? 1 : 0;
+  });
+
   # Router
   my $r = $self->routes;
 
   # Namespace
   $r->namespaces(['Moadbook::C']);
 
-  # Normal route to controller
-  $r->get('/')->to('example#welcome');
+  # Auth
+  $r->any('/login')->to('auth#login')->name('auth/login');
+  $r->any('/logout')->to('auth#logout')->name('auth/logout');
+
+  my $ra = $r->bridge('/')->to('auth#check')->name('auth/check');
+  $ra->get('/')->to('example#welcome')->name('index');
 }
 
 1;

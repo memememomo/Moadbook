@@ -8,4 +8,8 @@
             RaiseError          => 1,
         },
 	],
+	sys => {
+		login_id => 'admin',
+		login_password => 'admin',
+	},
 }
