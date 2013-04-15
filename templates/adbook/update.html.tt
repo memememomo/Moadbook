@@ -1,0 +1,65 @@
+[% WRAPPER "layouts/default.html.tt" %]
+
+<h1>編集</h1>
+
+<a href="[% c.url_for('adbook/index', page => page) %]">戻る</a>
+
+[% INCLUDE "inc/result_message.html.tt" %]
+[% INCLUDE "inc/error_messages.html.tt" %]
+
+<form action="[% c.url_for %]" method="post">
+  <table class="table table-bordered">
+    <tr>
+      <th>メールアドレス</th>
+      <td>
+		[% email %]
+        <input type="hidden" name="email"/>
+	  </td>
+    </tr>
+    <tr>
+      <th>名前</th>
+      <td>
+        <input type="text" name="name"/>
+      </td>
+    </tr>
+    <tr>
+      <th>年齢</th>
+      <td>
+        <input type="text" name="age"/>
+      </td>
+    </tr>
+    <tr>
+      <th>誕生日</th>
+      <td>
+        <input type="text" name="birthday_y"/>年
+        <select name="birthday_m">
+		  [% FOREACH v=month %]
+          <option value="[% v %]">[% v %]</option>
+		  [% END %]
+        </select>月
+        <select name="birthday_d">
+		  [% FOREACH v=day %]
+          <option value="[% v %]">[% v %]</option>
+		  [% END %]
+        </select>日
+      </td>
+    </tr>
+    <tr>
+      <th>性別</th>
+      <td>
+        <input type="radio" name="gender" value="male"/>男性<br/>
+        <input type="radio" name="gender" value="famale"/>女性
+	  </td>
+    </tr>
+    <tr>
+      <th>状態</th>
+      <td>
+        <input type="radio" name="status" value="1" checked=checked/>有効<br/>
+        <input type="radio" name="status" value="0"/>無効
+      </td>
+    </tr>
+  </table>
+  <input type="submit" value="更新"/>
+</form>
+
+[% END %]

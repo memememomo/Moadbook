@@ -1,0 +1,69 @@
+[% WRAPPER "layouts/default.html.tt" %]
+
+<a href="[% c.url_for('auth/logout') %]">ログアウト</a>
+
+<h1>リスト</h1>
+
+[% INCLUDE "inc/result_message.html.tt" %]
+
+<form action="[% c.url_for('adbook/create') %]" method="get">
+  <input type="submit" value="新規作成"/>
+</form>
+
+<form action="[% c.url_for('adbook/update_status') %]" method="post">
+  <table class="table table-bordered">
+    <tr>
+      <th>状態</th>
+      <th>ID</th>
+      <th>メールアドレス</th>
+      <th>名前</th>
+      <th>誕生日</th>
+      <th>性別</th>
+      <th>編集</th>
+      <th>削除</th>
+    </tr>
+	[% FOREACH v=list %]
+    <tr>
+      <td>
+        <input type="radio" name="status_[% v.id %]" value="1"/>有効<br/>
+        <input type="radio" name="status_[% v.id %]" value="0"/>無効<br/>
+      </td>
+      <td>[% v.id %]</td>
+      <td>[% v.email %]</td>
+      <td>[% v.name %]</td>
+      <td>[% v.birthday %]</td>
+      <td>
+		[% IF v.gender == "male" %]
+		男性
+		[% ELSIF v.gender == "famale" %]
+		女性
+		[% END %]
+      </td>
+      <td>
+        <input type="button" value="編集" onclick="do_edit('[% c.url_for('adbook/update', id => v.id) %]')" />
+      </td>
+      <td>
+        <input type="button" value="削除" onclick="do_delete('[% c.url_for('adbook/delete', id => v.id) %]')"/>
+      </td>
+    </tr>
+	[% END %]
+  </table>
+  <input type="submit" value="更新"/>
+
+  [% INCLUDE "inc/pager.html.tt" %]
+</form>
+
+<script type="text/javascript">
+  function do_delete(url) {
+      if (!confirm('削除しても良いですか？')) {
+           return 0;
+      }
+
+      location.href = url;
+  }
+  function do_edit(url) {
+      location.href = url;
+  }
+</script>
+
+[% END %]

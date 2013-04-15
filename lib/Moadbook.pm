@@ -3,6 +3,8 @@ use Mojo::Base 'Mojolicious';
 use DBI;
 use Teng::Schema::Loader;
 use Mojo::Loader;
+use Moadbook::Exception;
+use HTML::FillInForm::Lite;
 
 # This method will run once at server start
 sub startup {
@@ -28,6 +30,7 @@ sub startup {
 		  Teng::Schema::Loader->load(
 			  dbh		=> $dbh,
 			  namespace => 'Moadbook::DB',
+			  suppress_row_objects => 1,
 		  );
 	  };
   });
@@ -56,6 +59,11 @@ sub startup {
 	  $self->flash(result_message => $message);
   });
 
+  # リクエストをハッシュに変換
+  $self->helper(req_to_hash => sub {
+	  shift->req->params->to_hash;
+  });
+
   # エラーメッセージ
   $self->helper(set_error_messages => sub {
 	  my ($self, $messages) = @_;
@@ -74,6 +82,22 @@ sub startup {
 	  return lc($self->req->method) eq 'get' ? 1 : 0;
   });
 
+  # 例外
+  $self->helper(exception => sub { 'Moadbook::Exception' });
+
+  # FillInForm
+  $self->helper(render_filled_html => sub {
+	  my $self = shift;
+	  my $params = shift;
+	  my $html = $self->render_partial(@_)->to_string;
+
+	  my $fill = HTML::FillInForm::Lite->new(fill_password => 1);
+	  $self->render_text(
+		  $fill->fill(\$html, $params),
+		  format => 'html',
+	  );
+  });
+
   # Router
   my $r = $self->routes;
 
@@ -85,7 +109,11 @@ sub startup {
   $r->any('/logout')->to('auth#logout')->name('auth/logout');
 
   my $ra = $r->bridge('/')->to('auth#check')->name('auth/check');
-  $ra->get('/')->to('example#welcome')->name('index');
+  $ra->any('/adbook/list/:page')->to('adbook#index', {page => 1})->name('adbook/index');
+  $ra->any('/adbook/create')->to('adbook#create')->name('adbook/create');
+  $ra->any('/adbook/update/:id')->to('adbook#update')->name('adbook/update');
+  $ra->any('/adbook/delete/:id')->to('adbook#delete')->name('adbook/delete');
+  $ra->any('/adbook/update_status')->to('adbook#update_status')->name('adbook/update_status');
 }
 
 1;

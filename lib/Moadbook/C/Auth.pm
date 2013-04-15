@@ -14,7 +14,7 @@ sub login {
 		if ($login_id eq $self->param('login_id')
 				&& $login_password eq $self->param('login_password')) {
 			$self->session->{login_id} = $login_id;
-			return $self->redirect_to('index');
+			return $self->redirect_to('adbook/index');
 		}
 
 		$self->set_error_messages('IDまたはパスワードが間違っています。');
